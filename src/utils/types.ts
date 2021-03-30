@@ -12,4 +12,5 @@ export type Actions<Type> = {
 export interface Reducer<T> {
   reducer: Function;
   actions: Actions<T>;
+  initialState: object;
 }
