@@ -43,8 +43,7 @@ export function ozReducer<T extends Constructor>(constructor: T) {
   return class extends constructor {
     constructor(...args: any[]) {
       super(...args);
-
-
+      
       buildReducer(this);
       buildActions(this);
     };

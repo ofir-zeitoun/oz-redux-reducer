@@ -1,42 +1,6 @@
 import { action, initial, ozReducer } from "./oz-reducer";
 import { Reducer } from "./utils";
 
-
-// @ozReducer
-// class TestReducer {
-
-//   @initial
-//   state: string = "test"
-
-//   // @asyncAction
-//   @action
-//   actionA = async (dispatch: Function) => {
-//     // do something
-//     dispatch(this.actions.actionB(111));
-//   }
-
-//   @action
-//   actionB = <T extends object>(state: T, item: any) => ({ ...state, item })
-
-//   @action
-//   actionC<T extends object>(state: T, item: any): T {
-//     return { ...state, item };
-//   }
-// }
-
-// interface TestReducer extends Reducer<TestReducer> { };
-
-// const test = new TestReducer();
-
-// console.log(test.reducer.toString());
-// console.log(test.actions);
-// // const reducer = getReducer(test);
-// // console.log('reducer: ', reducer);
-// // const actions = getActions(test);
-// // console.log('actions: ', actions);
-
-// console.log(test.actions.actionB(1));
-
 describe('empty reducer', () => {
   @ozReducer
   class Empty {
