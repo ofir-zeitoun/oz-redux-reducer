@@ -1,25 +1,23 @@
 import { action, initial, ozReducer } from "./oz-reducer";
 import { Reducer } from "./utils";
 
-describe('empty reducer', () => {
+describe("empty reducer", () => {
   @ozReducer
-  class Empty {
-
-  }
-  interface Empty extends Reducer<Empty> { };
+  class Empty {}
+  interface Empty extends Reducer<Empty> {}
 
   const empty = new Empty();
 
   it("should have empty actions", () => {
     expect(empty).toHaveProperty("actions");
-    expect(Object.keys(empty.actions)).toHaveLength(0)
-  })
+    expect(Object.keys(empty.actions)).toHaveLength(0);
+  });
 
   it("should have single equality function", () => {
     expect(empty).toHaveProperty("reducer");
     const state = { a: 1 };
-    expect(empty.reducer(state, { type: "test", payload: 123 })).toBe(state)
-  })
+    expect(empty.reducer(state, { type: "test", payload: 123 })).toBe(state);
+  });
 });
 
 describe("Check initial state", () => {
@@ -28,16 +26,16 @@ describe("Check initial state", () => {
     @initial
     a: number = 1;
     @initial
-    b: string = "abc"
+    b: string = "abc";
   }
 
-  interface InitialState extends Reducer<InitialState> { };
+  interface InitialState extends Reducer<InitialState> {}
 
   const initState = new InitialState();
 
   it("should return initial state", () => {
     const state = initState.reducer(undefined, { type: "test", payload: 123 });
-    expect(state).toEqual({ a: 1, b: "abc" })
+    expect(state).toEqual({ a: 1, b: "abc" });
   });
 });
 
@@ -51,14 +49,23 @@ describe("Check simple actions", () => {
     add(state: any, toAdd: number) {
       return { ...state, sum: state.sum + toAdd };
     }
+
+    @action
+    async testAsync(state: any) {
+      await (() => {})();
+    }
   }
 
-  interface SimpleActions extends Reducer<SimpleActions> { };
+  interface SimpleActions extends Reducer<SimpleActions> {}
 
   const simple = new SimpleActions();
 
-  it('should add a value', () => {
+  it("should add a value", () => {
     const addType = simple.actions.add(123);
     expect(simple.reducer(undefined, addType)).toEqual({ sum: 123 });
-  })
+  });
+
+  it("should have two actions", () => {
+    expect(Object.keys(simple.actions)).toHaveLength(2);
+  });
 });
