@@ -100,4 +100,4 @@ describe("Check simple actions", () => {
     const addType = simple.actions.add(123);
     expect(simple.reducer(undefined, addType)).toEqual({ sum: 123 });
   })
-})
+});
