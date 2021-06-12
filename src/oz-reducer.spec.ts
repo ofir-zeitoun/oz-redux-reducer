@@ -71,13 +71,10 @@ describe("Check initial state", () => {
 
   const initState = new InitialState();
 
-  it("should have initial state", () => {
-    expect(initState.initialState).toEqual({ a: 1, b: "abc" })
-  })
-
   it("should return initial state", () => {
-    expect(initState.reducer(undefined, { type: "test", payload: 123 })).toEqual({ a: 1, b: "abc" })
-  })
+    const state = initState.reducer(undefined, { type: "test", payload: 123 });
+    expect(state).toEqual({ a: 1, b: "abc" })
+  });
 });
 
 describe("Check simple actions", () => {

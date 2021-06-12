@@ -13,14 +13,14 @@ export function ozReducer<T extends Constructor>(constructor: T) {
   }
 
   const buildReducer = (that: any) => {
-    that.initialState = getInitialState(that);
+    const initialState = getInitialState(that);
     const callbacks = new Proxy(that, {
       get: function (obj, prop) {
         const { [prop]: func = (state: object) => state } = obj;
         return func;
       }
     });
-    that.reducer = (state: object = that.initialState, { type, payload, ...rest }: Payload<any>) =>
+    that.reducer = (state: object = initialState, { type, payload, ...rest }: Payload<any>) =>
       callbacks[type](state, payload, rest);
   }
 
