@@ -1,6 +1,6 @@
 {
   "name": "oz-redux-reducer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Builds Redux reducers easily",
   "main": "src/index.ts",
   "scripts": {
@@ -17,7 +17,8 @@
   "keywords": [
     "Redux",
     "reducer",
-    "react"
+    "react",
+    "Decorator"
   ],
   "author": "Ofir Zeitoun",
   "license": "MIT",

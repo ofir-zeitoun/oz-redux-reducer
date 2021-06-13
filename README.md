@@ -56,3 +56,12 @@ export default combineReducers({
   // ...
 });
 ```
+
+calling actions:
+
+```js
+import test from "./TestReducer";
+
+// ...
+dispatch(test.actions.actionB(item));
+```
