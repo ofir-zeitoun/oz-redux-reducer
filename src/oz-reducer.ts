@@ -3,6 +3,7 @@ import { AsyncFunction, Constructor, identityFn, Payload } from "./utils";
 const actions = Symbol("actions");
 const asyncActions = Symbol("asyncActions");
 const state = Symbol("state");
+const reset = Symbol("reset");
 
 export function ozReducer<T extends Constructor>(constructor: T) {
   const getInitialState = (that: any) => {
@@ -14,12 +15,15 @@ export function ozReducer<T extends Constructor>(constructor: T) {
 
   const buildReducer = (that: any) => {
     const initialState = getInitialState(that);
+
     const callbacks = new Proxy(that, {
       get: function (obj, prop) {
         const { [prop]: func = identityFn } = obj;
         return func;
       }
     });
+    callbacks[reset] = () => initialState;
+
     that.reducer = (state: object = initialState, { type, payload, ...rest }: Payload<any>) =>
       callbacks[type](state, payload, rest);
   };
@@ -35,7 +39,9 @@ export function ozReducer<T extends Constructor>(constructor: T) {
         ...a,
         [type]: (payload: any) => ({ type, payload })
       }),
-      {}
+      {
+        resetState: () => ({ type: reset })
+      }
     );
 
     that.actions = asyncActionsKeys.reduce(

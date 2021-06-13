@@ -5,12 +5,16 @@ export interface Payload<T> {
   payload: T;
 }
 
+export interface IResetState {
+  resetState: () => void;
+}
+
 export type Actions<Type> = {
   [Property in keyof Type]: (payload: any) => void;
 };
 
 export interface Reducer<T> {
   reducer: Function;
-  actions: Actions<T>;
+  actions: Actions<T> & IResetState;
   initialState: object;
 }

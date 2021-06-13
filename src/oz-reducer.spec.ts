@@ -8,12 +8,12 @@ describe("empty reducer", () => {
 
   const empty = new Empty();
 
-  it("should have empty actions", () => {
+  it("should have only reset", () => {
     expect(empty).toHaveProperty("actions");
-    expect(Object.keys(empty.actions)).toHaveLength(0);
+    expect(Object.keys(empty.actions)).toHaveLength(1);
   });
 
-  it("should have single equality function", () => {
+  it("should have return state if no action was matched", () => {
     expect(empty).toHaveProperty("reducer");
     const state = { a: 1 };
     expect(empty.reducer(state, { type: "test", payload: 123 })).toBe(state);
@@ -65,7 +65,30 @@ describe("Check simple actions", () => {
     expect(simple.reducer(undefined, addType)).toEqual({ sum: 123 });
   });
 
-  it("should have two actions", () => {
-    expect(Object.keys(simple.actions)).toHaveLength(2);
+  it("should have two actions besides reset", () => {
+    expect(Object.keys(simple.actions)).toHaveLength(3);
   });
+});
+
+describe("Check state", () => {
+  @ozReducer
+  class TestState {
+    @initial
+    sum: number = 0;
+
+    @action
+    add(state: any, toAdd: number) {
+      return { ...state, sum: state.sum + toAdd };
+    }
+  }
+
+  interface TestState extends Reducer<TestState> {}
+  const { actions, reducer } = new TestState();
+
+  const state0 = reducer(undefined, actions.resetState());
+  expect(state0.sum).toBe(0);
+  const state1 = reducer(state0, actions.add(2));
+  expect(state1.sum).toBe(2);
+  const state2 = reducer(state0, actions.resetState());
+  expect(state2).toEqual(state0);
 });
