@@ -1,8 +1,8 @@
 {
   "name": "oz-redux-reducer",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Builds Redux reducers easily",
-  "main": "src/index.ts",
+  "main": "lib/index.js",
   "scripts": {
     "test": "jest",
     "build": "tsc",

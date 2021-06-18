@@ -1,7 +1,6 @@
-import { AsyncFunction, Constructor, identityFn, Payload } from "./utils";
+import { buildCallback, Constructor, identityFn, Payload } from "./utils";
 
 const actions = Symbol("actions");
-const asyncActions = Symbol("asyncActions");
 const state = Symbol("state");
 const reset = Symbol("reset");
 
@@ -19,7 +18,7 @@ export function ozReducer<T extends Constructor>(constructor: T) {
     const callbacks = new Proxy(that, {
       get: function (obj, prop) {
         const { [prop]: func = identityFn } = obj;
-        return func;
+        return func.bind(obj);
       }
     });
     callbacks[reset] = () => initialState;
@@ -29,28 +28,17 @@ export function ozReducer<T extends Constructor>(constructor: T) {
   };
 
   const buildActions = (that: any) => {
-    const { [actions]: actionKeys = [], [asyncActions]: asyncActionsKeys = [] } =
-      constructor.prototype;
+    const { [actions]: actionKeys = [] } = constructor.prototype;
     delete constructor.prototype[actions];
-    delete constructor.prototype[asyncActions];
 
-    const simpleActions = actionKeys.reduce(
-      (a: object, type: string) => ({
-        ...a,
-        [type]: (payload: any) => ({ type, payload })
+    that.actions = actionKeys.reduce(
+      <T extends object, U extends keyof T>(acc: T, name: U) => ({
+        ...acc,
+        [name]: buildCallback<T, U>(name)(that)
       }),
       {
         resetState: () => ({ type: reset })
       }
-    );
-
-    that.actions = asyncActionsKeys.reduce(
-      (a: object, type: string) => ({
-        ...a,
-        [type]: (payload: any) => (dispatch: Function, getState: Function, extraArgument: any) =>
-          that[type](dispatch, getState, extraArgument, payload)
-      }),
-      simpleActions
     );
   };
 
@@ -69,10 +57,7 @@ export function action(
   propertyKey: string,
   propertyDescriptor: PropertyDescriptor
 ): PropertyDescriptor {
-  const actionsType =
-    propertyDescriptor.value.constructor.name === AsyncFunction.name ? asyncActions : actions;
-
-  target[actionsType] = [...(target[actionsType] || []), propertyKey];
+  target[actions] = [...(target[actions] || []), propertyKey];
   return propertyDescriptor;
 }
 
