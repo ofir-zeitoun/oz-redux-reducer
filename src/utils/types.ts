@@ -1,8 +1,8 @@
 export type Constructor<T = {}> = new (...args: any[]) => T;
 
-export interface Payload<T> {
-  type: string;
-  payload: T;
+export interface Payload<T, P> {
+  type: keyof Reducer<T>;
+  payload: P;
 }
 
 export interface IResetState {

@@ -1,4 +1,4 @@
-import { buildCallback, Constructor, identityFn, Payload } from "./utils";
+import { buildCallback, Constructor, identityFn, Payload, Reducer } from "./utils";
 
 const actions = Symbol("actions");
 const state = Symbol("state");
@@ -12,27 +12,32 @@ export function ozReducer<T extends Constructor>(constructor: T) {
     return initMembers.reduce((a: object, c: string) => ({ ...a, [c]: that[c] }), {});
   };
 
-  const buildReducer = (that: any) => {
+  const buildReducer = (that: Reducer<T>) => {
     const initialState = getInitialState(that);
 
     const callbacks = new Proxy(that, {
-      get: function (obj, prop) {
-        const { [prop]: func = identityFn } = obj;
-        return func.bind(obj);
+      get: function <U extends keyof (Reducer<T> | { [reset]: Function })>(
+        obj: Reducer<T>,
+        prop: U
+      ) {
+        if (prop === reset) {
+          return () => initialState;
+        }
+        return ((obj[prop] as Function) || identityFn).bind(that);
       }
     });
-    callbacks[reset] = () => initialState;
+    // callbacks[reset] = () => initialState;
 
-    that.reducer = (state: object = initialState, { type, payload, ...rest }: Payload<any>) =>
-      callbacks[type](state, payload, rest);
+    that.reducer = (state: T = initialState, { type, payload, ...rest }: Payload<T, any>) =>
+      (callbacks[type] as Function)(state, payload, rest);
   };
 
-  const buildActions = (that: any) => {
+  const buildActions = (that: Reducer<T>) => {
     const { [actions]: actionKeys = [] } = constructor.prototype;
     delete constructor.prototype[actions];
 
     that.actions = actionKeys.reduce(
-      <T extends object, U extends keyof T>(acc: T, name: U) => ({
+      <U extends keyof Reducer<T>>(acc: T, name: U) => ({
         ...acc,
         [name]: buildCallback<T, U>(name)(that)
       }),
@@ -42,12 +47,12 @@ export function ozReducer<T extends Constructor>(constructor: T) {
     );
   };
 
-  return class extends constructor {
+  return class ReducerWrapper extends constructor {
     constructor(...args: any[]) {
       super(...args);
 
-      buildReducer(this);
-      buildActions(this);
+      buildReducer(this as unknown as Reducer<T>);
+      buildActions(this as unknown as Reducer<T>);
     }
   };
 }

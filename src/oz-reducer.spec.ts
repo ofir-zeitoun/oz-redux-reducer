@@ -83,7 +83,8 @@ describe("Check state", () => {
   }
 
   interface TestState extends Reducer<TestState> {}
-  const { actions, reducer } = new TestState();
+  const test = new TestState();
+  const { actions, reducer } = test;
 
   const state0 = reducer(undefined, actions.resetState());
   expect(state0.sum).toBe(0);
