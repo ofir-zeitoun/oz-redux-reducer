@@ -13,7 +13,9 @@ Works with:
 1. [Redux Thunk](https://www.npmjs.com/package/redux-thunk "npm")
 1. [React Redux](https://www.npmjs.com/package/react-redux "npm")
 
-Usage:
+Jump to: [How to enable decorators in CRA](#how-to-enable-decorators-in-cra)
+
+## Usage:
 
 ```ts
 @ozReducer
@@ -65,3 +67,53 @@ import test from "./TestReducer";
 // ...
 dispatch(test.actions.actionB(item));
 ```
+
+## How to enable decorators in CRA
+
+Copied from [Using Mobx decorators in Create React app v3](https://tombuyse.blog/blog/using-mobx-decorators-in-create-react-app-v3)
+
+To enable decorators in CRA, we will need two dependencies:
+
+- customize-cra: makes sure we can tweak the CRA webpack config
+- react-app-rewired: needed by customize-cra, it will leverage this dependency under the hood
+  Install these dependencies:
+
+`npm install --dev customize-cra react-app-rewired`
+
+Next step, replace "react-scripts" with "react-app-rewired":
+
+file: _package.json_
+
+```json
+# instead of react-scripts start
+"start": "react-app-rewired start",
+# instead of react-scripts build
+"build": "react-app-rewired build"
+```
+
+Now we need to add config-overrides.js in the base project to enable the decorator support within CRA.
+
+file: _config-overrides.js_
+
+```javascript
+const { addDecoratorsLegacy, useEslintRc, override } = require("customize-cra");
+
+module.exports = override(addDecoratorsLegacy(), useEslintRc("./.eslintrc"));
+```
+
+The final step is to make sure that our Eslint support decorators. Add following content to a new .eslintrc file (in the base project folder)
+
+file: _.eslintrc_
+
+```json
+{
+  "extends": "react-app",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "legacyDecorators": true
+    }
+  }
+}
+```
+
+### Now replace old reducers with new ozReducer :-)
