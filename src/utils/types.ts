@@ -1,20 +1,33 @@
-export type Constructor<T = {}> = new (...args: any[]) => T;
+// export interface IResetState {
+//   resetState: () => void;
+// }
 
-export interface Payload<T, P> {
-  type: keyof Reducer<T>;
-  payload: P;
+import { ExcludeType, ExtractKeys, ExtractType, Without } from "./infra-types";
+
+type ActionTypeKeys<T> = ExtractKeys<T, Function>;
+
+export interface ActionPayload<T> {
+  type: ActionTypeKeys<T>;
+  payload?: T[keyof T];
 }
 
-export interface IResetState {
-  resetState: () => void;
-}
+// ↓↓↓↓↓ interesting ↓↓↓↓↓↓↓
+export type ActionsType<T> = Without<
+  {
+    [Property in keyof T]: T[Property] extends (state: object) => void
+      ? () => ActionPayload<T> // no params
+      : T[Property] extends (state: object, payload: any) => void
+      ? (payload: Parameters<T[Property]>[1]) => ActionPayload<T> // with params
+      : never;
+  },
+  never
+>;
 
-export type Actions<Type> = {
-  [Property in keyof Type]: (payload: any) => void;
-};
+export type CallbacksType<T> = ExtractType<T, (...args: any[]) => void>;
 
-export interface Reducer<T> {
-  reducer: Function;
-  actions: Actions<T> & IResetState;
-  initialState: object;
-}
+export type StateType<T> = ExcludeType<T, (...args: any[]) => void>;
+
+export type Reducer<T> = (
+  state: StateType<T> | undefined,
+  { type, payload }: ActionPayload<T>
+) => StateType<T>;

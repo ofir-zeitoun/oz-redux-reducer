@@ -1,6 +1,6 @@
 {
   "name": "oz-redux-reducer",
-  "version": "1.0.4",
+  "version": "2.0.0",
   "description": "Builds Redux reducers easily",
   "main": "lib/index.js",
   "scripts": {
@@ -17,8 +17,7 @@
   "keywords": [
     "Redux",
     "reducer",
-    "react",
-    "Decorator"
+    "react"
   ],
   "author": "Ofir Zeitoun",
   "license": "MIT",
@@ -37,10 +36,10 @@
     "testRegex": "^.+\\.spec\\.ts$"
   },
   "devDependencies": {
-    "@types/jest": "^26.0.20",
-    "jest": "^26.6.3",
-    "ts-jest": "^26.5.3",
-    "typescript": "^4.2.3"
+    "@types/jest": "^27.4.1",
+    "jest": "^27.5.1",
+    "ts-jest": "^27.1.4",
+    "typescript": "^4.6.3"
   },
   "dependencies": {}
 }

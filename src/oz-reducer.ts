@@ -1,71 +1,57 @@
-import { buildCallback, Constructor, identityFn, Payload, Reducer } from "./utils";
+import {
+  ActionPayload,
+  AsyncFunction,
+  ActionsType,
+  CallbacksType,
+  Entry,
+  identityFn,
+  StateType,
+  Reducer
+} from "./utils";
 
-const actions = Symbol("actions");
-const state = Symbol("state");
-const reset = Symbol("reset");
+const isAsync = (func: any) => func.constructor.name === AsyncFunction.name;
 
-export function ozReducer<T extends Constructor>(constructor: T) {
-  const getInitialState = (that: any) => {
-    const { [state]: initMembers = [] } = constructor.prototype;
-    delete constructor.prototype[state];
-
-    return initMembers.reduce((a: object, c: string) => ({ ...a, [c]: that[c] }), {});
-  };
-
-  const buildReducer = (that: Reducer<T>) => {
-    const initialState = getInitialState(that);
-
-    const callbacks = new Proxy(that, {
-      get: function <U extends keyof (Reducer<T> | { [reset]: Function })>(
-        obj: Reducer<T>,
-        prop: U
-      ) {
-        if (prop === reset) {
-          return () => initialState;
-        }
-        return ((obj[prop] as Function) || identityFn).bind(that);
-      }
-    });
-    // callbacks[reset] = () => initialState;
-
-    that.reducer = (state: T = initialState, { type, payload, ...rest }: Payload<T, any>) =>
-      (callbacks[type] as Function)(state, payload, rest);
-  };
-
-  const buildActions = (that: Reducer<T>) => {
-    const { [actions]: actionKeys = [] } = constructor.prototype;
-    delete constructor.prototype[actions];
-
-    that.actions = actionKeys.reduce(
-      <U extends keyof Reducer<T>>(acc: T, name: U) => ({
-        ...acc,
-        [name]: buildCallback<T, U>(name)(that)
+function buildActions<T, TKey extends keyof T>(obj: T): ActionsType<T> {
+  return (Object.entries(obj) as Entry<T>[])
+    .filter(([, func]) => typeof func === "function")
+    .reduce(
+      (a, [key, func]) => ({
+        ...a,
+        [key]: isAsync(func)
+          ? (payload: T[TKey]) => (dispatch: Function, getState: Function, extraArgument: any) =>
+              (func as unknown as Function).bind(obj)(dispatch, getState, extraArgument, payload)
+          : (payload: T[TKey]) => ({ type: key, payload })
       }),
-      {
-        resetState: () => ({ type: reset })
-      }
+      {} as ActionsType<T>
     );
-  };
+}
 
-  return class ReducerWrapper extends constructor {
-    constructor(...args: any[]) {
-      super(...args);
+function buildInitState<T>(obj: T): StateType<T> {
+  return (Object.entries(obj) as Entry<T>[])
+    .filter(([, func]) => typeof func !== "function")
+    .reduce((a, [key, value]) => ({ ...a, [key]: value }), {} as StateType<T>);
+}
 
-      buildReducer(this as unknown as Reducer<T>);
-      buildActions(this as unknown as Reducer<T>);
+function buildInternalReducer<T>(obj: T): Reducer<T> {
+  const initialState = buildInitState(obj);
+
+  const callbacks = (Object.entries(obj) as Entry<T>[])
+    .filter(([, func]) => typeof func === "function")
+    .reduce((a, [key, func]) => ({ ...a, [key]: func }), {} as CallbacksType<T>);
+
+  const stateReducer = new Proxy(callbacks, {
+    get: function (target: any, p: string | symbol) {
+      return ((target[p] as Function) || identityFn).bind(target);
     }
-  };
+  });
+
+  return (state = initialState, { type, payload }: ActionPayload<T>) =>
+    (stateReducer[type] as Function)(state, payload);
 }
 
-export function action(
-  target: any,
-  propertyKey: string,
-  propertyDescriptor: PropertyDescriptor
-): PropertyDescriptor {
-  target[actions] = [...(target[actions] || []), propertyKey];
-  return propertyDescriptor;
-}
+export function buildOzReducer<T extends object>(obj: T): [Reducer<T>, ActionsType<T>] {
+  const actions = buildActions(obj);
+  const reducer = buildInternalReducer(obj);
 
-export function initial(target: any, propertyKey: string) {
-  target[state] = [...(target[state] || []), propertyKey];
+  return [reducer, actions];
 }

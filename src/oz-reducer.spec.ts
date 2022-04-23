@@ -1,95 +1,66 @@
-import { action, initial, ozReducer } from "./oz-reducer";
-import { Reducer } from "./utils";
+import { buildOzReducer } from "./oz-reducer";
 
 describe("empty reducer", () => {
-  @ozReducer
-  class Empty {}
-  interface Empty extends Reducer<Empty> {}
+  const [reducer, actions] = buildOzReducer({});
 
-  const empty = new Empty();
-
-  it("should have only reset", () => {
-    expect(empty).toHaveProperty("actions");
-    expect(Object.keys(empty.actions)).toHaveLength(1);
+  it("should have only reset!!!", () => {
+    expect(Object.keys(actions)).toHaveLength(0);
   });
 
   it("should have return state if no action was matched", () => {
-    expect(empty).toHaveProperty("reducer");
     const state = { a: 1 };
-    expect(empty.reducer(state, { type: "test", payload: 123 })).toBe(state);
+    // next line need this flag, because it's compile time error
+    // @ts-expect-error
+    expect(reducer(state, { type: "" })).toBe(state);
   });
 });
 
 describe("Check initial state", () => {
-  @ozReducer
-  class InitialState {
-    @initial
-    a: number = 1;
-    @initial
-    b: string = "abc";
-  }
-
-  interface InitialState extends Reducer<InitialState> {}
-
-  const initState = new InitialState();
+  const [reducer, actions] = buildOzReducer({
+    a: 1,
+    b: "abc"
+  });
 
   it("should return initial state", () => {
-    const state = initState.reducer(undefined, { type: "test", payload: 123 });
-    expect(state).toEqual({ a: 1, b: "abc" });
+    // next line need this flag, because it's compile time error
+    // @ts-expect-error
+    expect(reducer(undefined, { type: "" })).toEqual({ a: 1, b: "abc" });
   });
 });
 
 describe("Check simple actions", () => {
-  @ozReducer
-  class SimpleActions {
-    @initial
-    sum: number = 0;
-
-    @action
+  const [reducer, actions] = buildOzReducer({
+    sum: 0,
     add(state: any, toAdd: number) {
       return { ...state, sum: state.sum + toAdd };
-    }
+    },
 
-    @action
     async testAsync(state: any) {
-      await (() => {})();
+      return await state;
     }
-  }
-
-  interface SimpleActions extends Reducer<SimpleActions> {}
-
-  const simple = new SimpleActions();
-
-  it("should add a value", () => {
-    const addType = simple.actions.add(123);
-    expect(simple.reducer(undefined, addType)).toEqual({ sum: 123 });
   });
 
-  it("should have two actions besides reset", () => {
-    expect(Object.keys(simple.actions)).toHaveLength(3);
+  it("should add a value", () => {
+    expect(reducer(undefined, actions.add(123))).toEqual({ sum: 123 });
+  });
+
+  it("should have two actions besides reset !!!", () => {
+    expect(Object.keys(actions)).toHaveLength(2);
   });
 });
 
 describe("Check state", () => {
-  @ozReducer
-  class TestState {
-    @initial
-    sum: number = 0;
-
-    @action
+  const [reducer, actions] = buildOzReducer({
+    sum: 0,
     add(state: any, toAdd: number) {
       return { ...state, sum: state.sum + toAdd };
     }
-  }
+  });
 
-  interface TestState extends Reducer<TestState> {}
-  const test = new TestState();
-  const { actions, reducer } = test;
-
-  const state0 = reducer(undefined, actions.resetState());
+  const state0 = reducer(undefined, actions.add(0));
   expect(state0.sum).toBe(0);
   const state1 = reducer(state0, actions.add(2));
   expect(state1.sum).toBe(2);
-  const state2 = reducer(state0, actions.resetState());
-  expect(state2).toEqual(state0);
+  const state2 = reducer(state1, actions.add(-1));
+  expect(state2.sum).toEqual(1);
 });

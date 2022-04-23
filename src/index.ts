@@ -1,2 +1,2 @@
-export { ozReducer, action, initial } from "./oz-reducer";
-export { Reducer, Actions, Payload } from "./utils";
+export { buildOzReducer } from "./oz-reducer";
+export * from "./utils/types";
