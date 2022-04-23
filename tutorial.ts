@@ -1,4 +1,4 @@
-import { AsyncFunction, identityFn } from "./utils";
+import { AsyncFunction, identityFn } from "./src/utils";
 
 // https://stackoverflow.com/questions/63447660/typescript-remove-all-properties-with-particular-type
 type Without<
@@ -179,4 +179,3 @@ const obj = buildReducer({
 // const state5 = obj.reducer(state1, obj.actions.longShot(5));
 // console.log("state5: ", state5);
 // console.log("obj: ", obj.actions.send("b"));
-
