@@ -20,6 +20,14 @@ export type ActionsType<T> = Without<
       ? (payload: Parameters<T[Property]>[1]) => ActionPayload<T> // with params
       : T[Property] extends (dispatch: Function) => Promise<void>
       ? () => ActionPayload<T> // no params
+      : T[Property] extends (dispatch: Function, getState: Function) => Promise<void>
+      ? () => ActionPayload<T> // no params
+      : T[Property] extends (
+          dispatch: Function,
+          getState: Function,
+          extraArgument: any
+        ) => Promise<void>
+      ? () => ActionPayload<T> // no params
       : T[Property] extends (
           dispatch: Function,
           getState: Function,
