@@ -13,9 +13,19 @@ Works with:
 1. [Redux Thunk](https://www.npmjs.com/package/redux-thunk "npm")
 1. [React Redux](https://www.npmjs.com/package/react-redux "npm")
 
+## Install:
+
+```
+npm i oz-redux-reducer
+```
+
 ## Usage:
 
 ```ts
+import { buildOzReducer } from "oz-redux-reducer";
+// .
+// .
+// .
 export const [testReducer, testActions] = buildOzReducer({
   text: "test",
   setText(state: object, newValue: string) {
