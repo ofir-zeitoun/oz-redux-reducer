@@ -22,14 +22,14 @@ export const [testReducer, testActions] = buildOzReducer({
     ).then(response => response.json());
     dispatch(testActions.setSum(value));
   },
-  setWord(state: any, { word, prev }: { word: string; prev?: string }) {
-    return { ...state, prev, word };
+  setWord(state: any, word: string) {
+    return { ...state, prev: state.word, word };
   },
-  async fetchWord(dispatch: Function, getState: Function, extraArgument: any, payload: string) {
+  async fetchWord(dispatch: Function, getState: Function, extraArgument: any, payload: number) {
     const word = await fetch(
-      "https://www.random.org/strings/?num=1&len=10&digits=on&upperalpha=on&loweralpha=on&format=plain&rnd=new"
+      `https://www.random.org/strings/?num=1&len=${payload}&digits=on&upperalpha=on&loweralpha=on&format=plain&rnd=new`
     ).then(response => response.text());
 
-    dispatch(testActions.setWord({ word, prev: payload }));
+    dispatch(testActions.setWord(word));
   }
 });
