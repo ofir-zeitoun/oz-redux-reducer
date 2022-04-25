@@ -31,7 +31,7 @@ export const [testReducer, testActions] = buildOzReducer({
   setText(state: object, newValue: string) {
     return { ...state, text: newValue };
   },
-  fetchText(dispatch: Function) {
+  async fetchText(dispatch: Function) {
     const value = await fetch(
       ///...
     ).then(response => response.text());
