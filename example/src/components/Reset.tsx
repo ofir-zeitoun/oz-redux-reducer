@@ -7,7 +7,7 @@ export default function Reset() {
 
   return (
     <button
-      onClick={() => dispatch(testActions.reset())}
+      onClick={() => dispatch(testActions.resetState())}
       style={{ background: "red", color: "white" }}
     >
       Reset

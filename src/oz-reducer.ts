@@ -22,7 +22,11 @@ function buildActions<T, TKey extends keyof T>(obj: T): ActionsType<T> {
               (func as unknown as Function).bind(obj)(dispatch, getState, extraArgument, payload)
           : (payload: T[TKey]) => ({ type: key, payload })
       }),
-      {} as ActionsType<T>
+      {
+        resetState() {
+          return { type: "resetState" };
+        }
+      } as ActionsType<T>
     );
 }
 
@@ -37,7 +41,9 @@ function buildInternalReducer<T>(obj: T): Reducer<T> {
 
   const callbacks = (Object.entries(obj) as Entry<T>[])
     .filter(([, func]) => typeof func === "function")
-    .reduce((a, [key, func]) => ({ ...a, [key]: func }), {} as CallbacksType<T>);
+    .reduce((a, [key, func]) => ({ ...a, [key]: func }), {
+      resetState: () => initialState
+    } as CallbacksType<T> | { resetState: () => any });
 
   const stateReducer = new Proxy(callbacks, {
     get: function (target: any, p: string | symbol) {

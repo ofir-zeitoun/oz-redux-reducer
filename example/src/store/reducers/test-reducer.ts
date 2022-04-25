@@ -10,7 +10,7 @@ export const [testReducer, testActions] = buildOzReducer({
       sum: state.sum + toAdd
     };
   },
-  reset(state: any) {
+  resetSum(state: any) {
     return { ...state, sum: 0 };
   },
   setSum(state: any, sum: number) {

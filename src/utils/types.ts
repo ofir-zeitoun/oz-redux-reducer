@@ -1,8 +1,8 @@
-// export interface IResetState {
-//   resetState: () => void;
-// }
-
 import { ExcludeType, ExtractKeys, ExtractType, Without } from "./infra-types";
+
+interface IResetStateAction {
+  resetState(): ActionPayload<void>;
+}
 
 type ActionTypeKeys<T> = ExtractKeys<T, Function>;
 
@@ -38,7 +38,8 @@ export type ActionsType<T> = Without<
       : never;
   },
   never
->;
+> &
+  IResetStateAction;
 
 export type CallbacksType<T> = ExtractType<T, (...args: any[]) => void>;
 
