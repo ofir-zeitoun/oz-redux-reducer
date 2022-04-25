@@ -2,7 +2,7 @@ import { ChangeEvent, useState } from "react";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { testActions } from "store";
 
-export default function Sum() {
+export default function Word() {
   const dispatch = useDispatch();
   const [wordLength, setWordLength] = useState(5);
 
@@ -19,7 +19,6 @@ export default function Sum() {
       <div>Old word: {prev}</div>
       <div>Word: {word}</div>
       <input
-        id="typeinp"
         type="range"
         min="3"
         max="10"
