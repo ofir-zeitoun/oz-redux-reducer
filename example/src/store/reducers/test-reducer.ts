@@ -1,19 +1,25 @@
 import { buildOzReducer } from "oz-redux-reducer";
 
+type Init = {
+  sum: number;
+  word: string;
+  prev: string;
+};
+
 export const [testReducer, testActions] = buildOzReducer({
   sum: 0,
   word: "<Empty>",
   prev: "<Empty>",
-  add(state: any, toAdd: number) {
+  add(state: Init, toAdd: number) {
     return {
       ...state,
       sum: state.sum + toAdd
     };
   },
-  resetSum(state: any) {
+  resetSum(state: Init) {
     return { ...state, sum: 0 };
   },
-  setSum(state: any, sum: number) {
+  setSum(state: Init, sum: number) {
     return { ...state, sum };
   },
   async fetchRandom(dispatch: Function) {
@@ -22,14 +28,19 @@ export const [testReducer, testActions] = buildOzReducer({
     ).then(response => response.json());
     dispatch(testActions.setSum(value));
   },
-  setWord(state: any, word: string) {
+  setWord(state: Init, word: string) {
     return { ...state, prev: state.word, word };
   },
-  async fetchWord(dispatch: Function, getState: Function, extraArgument: any, payload: number) {
+  async fetchWord(
+    dispatch: Function,
+    getState: ReturnType<() => Init>,
+    extraArgument: any,
+    payload: number
+  ) {
     const word = await fetch(
       `https://www.random.org/strings/?num=1&len=${payload}&digits=on&upperalpha=on&loweralpha=on&format=plain&rnd=new`
     ).then(response => response.text());
 
-    dispatch(testActions.setWord(word));
+    dispatch(testActions.setWord(word.trim()));
   }
 });

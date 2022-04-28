@@ -1,19 +1,22 @@
 import {
   ActionPayload,
-  AsyncFunction,
   ActionsType,
   CallbacksType,
   Entry,
   identityFn,
   StateType,
-  Reducer
+  Reducer,
+  ResetState,
+  IResetState,
+  isFunc,
+  isAsync
 } from "./utils";
 
-const isAsync = (func: any) => func.constructor.name === AsyncFunction.name;
-
 function buildActions<T, TKey extends keyof T>(obj: T): ActionsType<T> {
-  return (Object.entries(obj) as Entry<T>[])
-    .filter(([, func]) => typeof func === "function")
+  const reset = new ResetState({});
+
+  return (Object.entries(obj).concat(Object.entries(reset)) as Entry<T>[])
+    .filter(([, func]) => isFunc(func))
     .reduce(
       (a, [key, func]) => ({
         ...a,
@@ -22,31 +25,33 @@ function buildActions<T, TKey extends keyof T>(obj: T): ActionsType<T> {
               (func as unknown as Function).bind(obj)(dispatch, getState, extraArgument, payload)
           : (payload: T[TKey]) => ({ type: key, payload })
       }),
-      {
-        resetState() {
-          return { type: "resetState" };
-        }
-      } as ActionsType<T>
+      {} as ActionsType<T>
     );
 }
 
 function buildInitState<T>(obj: T): StateType<T> {
   return (Object.entries(obj) as Entry<T>[])
-    .filter(([, func]) => typeof func !== "function")
+    .filter(([, func]) => !isFunc(func))
     .reduce((a, [key, value]) => ({ ...a, [key]: value }), {} as StateType<T>);
 }
 
 function buildInternalReducer<T>(obj: T): Reducer<T> {
   const initialState = buildInitState(obj);
 
-  const callbacks = (Object.entries(obj) as Entry<T>[])
-    .filter(([, func]) => typeof func === "function")
-    .reduce((a, [key, func]) => ({ ...a, [key]: func }), {
-      resetState: () => initialState
-    } as CallbacksType<T> | { resetState: () => any });
+  const init = new ResetState(initialState);
+
+  const callbacks = (Object.entries(obj).concat(Object.entries(init)) as Entry<T>[])
+    .filter(([, func]) => isFunc(func))
+    .reduce(
+      (a, [key, func]) => ({
+        ...a,
+        [key]: func
+      }),
+      init as CallbacksType<T> | IResetState<T>
+    );
 
   const stateReducer = new Proxy(callbacks, {
-    get: function (target: any, p: string | symbol) {
+    get: function (target: any, p: string) {
       return ((target[p] as Function) || identityFn).bind(target);
     }
   });
