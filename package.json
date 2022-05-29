@@ -3,7 +3,7 @@
   "version": "2.0.8",
   "description": "Builds Redux reducers easily",
   "main": "lib/index.js",
-  "homepage": "https://ofir-zeitoun.github.io/oz-redux-reducer",
+  "homepage": "https://ofir-zeitoun.github.io/oz-redux-reducer/",
   "scripts": {
     "test": "jest",
     "build": "tsc",
