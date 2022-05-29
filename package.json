@@ -10,7 +10,7 @@
     "prepare": "npm run build",
     "prestart": "npm run build",
     "start": "tsc -w",
-    "predeploy": "npm run build && pushd example && npm run build && popd",
+    "predeploy": "npm run build && pushd example && PUBLIC_URL=/oz-redux-reducer npm run build && popd",
     "deploy": "gh-pages -d example/build"
   },
   "repository": {
