@@ -3,12 +3,15 @@
   "version": "2.0.8",
   "description": "Builds Redux reducers easily",
   "main": "lib/index.js",
+  "homepage": "https://ofir-zeitoun.github.io/oz-redux-reducer",
   "scripts": {
     "test": "jest",
     "build": "tsc",
     "prepare": "npm run build",
     "prestart": "npm run build",
-    "start": "tsc -w"
+    "start": "tsc -w",
+    "predeploy": "npm run build && pushd example && npm run build && popd",
+    "deploy": "gh-pages -d example/build"
   },
   "repository": {
     "type": "git",
@@ -24,7 +27,6 @@
   "bugs": {
     "url": "https://github.com/ofir-zeitoun/oz-redux-reducer/issues"
   },
-  "homepage": "https://github.com/ofir-zeitoun/oz-redux-reducer#readme",
   "jest": {
     "transform": {
       "^.+\\.tsx?$": "ts-jest"
@@ -41,5 +43,7 @@
     "ts-jest": "^27.1.4",
     "typescript": "^4.6.3"
   },
-  "dependencies": {}
+  "dependencies": {
+    "gh-pages": "^4.0.0"
+  }
 }
