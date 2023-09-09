@@ -12,7 +12,7 @@ import {
   isAsync
 } from "./utils";
 
-function buildActions<T extends object, TKey extends keyof T>(obj: T): ActionsType<T> {
+function buildActions<T extends { [s: string]: unknown; }, TKey extends keyof T>(obj: T): ActionsType<T> {
   const reset = new ResetState({});
 
   return (Object.entries(obj).concat(Object.entries(reset)) as Entry<T>[])
@@ -29,13 +29,13 @@ function buildActions<T extends object, TKey extends keyof T>(obj: T): ActionsTy
     );
 }
 
-function buildInitState<T extends object>(obj: T): StateType<T> {
+function buildInitState<T extends { [s: string]: unknown; }>(obj: T): StateType<T> {
   return (Object.entries(obj) as Entry<T>[])
     .filter(([, func]) => !isFunc(func))
     .reduce((a, [key, value]) => ({ ...a, [key]: value }), {} as StateType<T>);
 }
 
-function buildInternalReducer<T extends object>(obj: T): Reducer<T> {
+function buildInternalReducer<T extends { [s: string]: unknown; }>(obj: T): Reducer<T> {
   const initialState = buildInitState(obj);
 
   const init = new ResetState(initialState);
@@ -60,7 +60,7 @@ function buildInternalReducer<T extends object>(obj: T): Reducer<T> {
     (stateReducer[type] as Function)(state, payload);
 }
 
-export function buildOzReducer<T extends object>(obj: T): [Reducer<T>, ActionsType<T>] {
+export function buildOzReducer<T extends { [s: string]: unknown; }>(obj: T): [Reducer<T>, ActionsType<T>] {
   const actions = buildActions(obj);
   const reducer = buildInternalReducer(obj);
 
