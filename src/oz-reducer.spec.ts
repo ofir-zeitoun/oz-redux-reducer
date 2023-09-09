@@ -4,7 +4,7 @@ describe("empty reducer", () => {
   const [reducer, actions] = buildOzReducer({});
 
   it("should have only reset!!!", () => {
-    expect(Object.keys(actions)).toHaveLength(0);
+    expect(Object.keys(actions)).toHaveLength(1);
   });
 
   it("should have return state if no action was matched", () => {
@@ -45,7 +45,7 @@ describe("Check simple actions", () => {
   });
 
   it("should have two actions besides reset !!!", () => {
-    expect(Object.keys(actions)).toHaveLength(2);
+    expect(Object.keys(actions)).toHaveLength(3);
   });
 });
 
