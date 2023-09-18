@@ -1,3 +1,4 @@
+import { Dispatch } from "redux";
 import { ExcludeType, ExtractKeys, ExtractType, Without } from "./infra-types";
 
 export type ActionTypeKeys<T> = ExtractKeys<T, Function>;
@@ -33,21 +34,21 @@ export type ActionsType<T> = Without<
       ? () => ActionPayload<T> // no params
       : T[Property] extends (state: StateType<T>, payload: any) => void
       ? (payload: Parameters<T[Property]>[1]) => ActionPayload<T> // with params
-      : T[Property] extends (dispatch: Function) => Promise<void>
+      : T[Property] extends (dispatch: Dispatch) => Promise<void>
       ? () => ActionPayload<T> // no params
       : T[Property] extends (
-          dispatch: Function,
+          dispatch: Dispatch,
           getState: GetState<T>
         ) => Promise<void>
       ? () => ActionPayload<T> // no params
       : T[Property] extends (
-          dispatch: Function,
+          dispatch: Dispatch,
           getState: GetState<T>,
           extraArgument: any
         ) => Promise<void>
       ? () => ActionPayload<T> // no params
       : T[Property] extends (
-          dispatch: Function,
+          dispatch: Dispatch,
           getState: GetState<T>,
           extraArgument: any,
           payload: infer PayloadType
