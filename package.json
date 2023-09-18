@@ -1,6 +1,6 @@
 {
   "name": "oz-redux-reducer",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Builds Redux reducers easily",
   "main": "lib/index.js",
   "homepage": "https://ofir-zeitoun.github.io/oz-redux-reducer/",
