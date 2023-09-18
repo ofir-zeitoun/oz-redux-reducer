@@ -6,7 +6,7 @@ export interface ActionPayload<T> {
 }
 export type CallbacksType<T> = ExtractType<T, (...args: any[]) => void>;
 export type StateType<T> = ExcludeType<T, (...args: any[]) => void>;
-export type GetState<T> = ReturnType<() => StateType<T>>;
+export type GetState<T> = () => StateType<T>;
 interface IResetStateAction {
     resetState(): ActionPayload<void>;
 }

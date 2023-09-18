@@ -11,7 +11,7 @@ export type CallbacksType<T> = ExtractType<T, (...args: any[]) => void>;
 
 export type StateType<T> = ExcludeType<T, (...args: any[]) => void>;
 
-export type GetState<T> = ReturnType<() => StateType<T>>;
+export type GetState<T> = () => StateType<T>;
 
 interface IResetStateAction {
   resetState(): ActionPayload<void>;
@@ -35,7 +35,10 @@ export type ActionsType<T> = Without<
       ? (payload: Parameters<T[Property]>[1]) => ActionPayload<T> // with params
       : T[Property] extends (dispatch: Function) => Promise<void>
       ? () => ActionPayload<T> // no params
-      : T[Property] extends (dispatch: Function, getState: GetState<T>) => Promise<void>
+      : T[Property] extends (
+          dispatch: Function,
+          getState: GetState<T>
+        ) => Promise<void>
       ? () => ActionPayload<T> // no params
       : T[Property] extends (
           dispatch: Function,
