@@ -1,5 +1,5 @@
 {
-  "name": "@oz-utils/redux-reducer",
+  "name": "oz-redux-reducer",
   "version": "3.0.0",
   "description": "Builds Redux reducers easily",
   "main": "lib/index.js",
