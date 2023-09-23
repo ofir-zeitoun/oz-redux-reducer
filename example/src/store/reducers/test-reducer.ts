@@ -1,4 +1,4 @@
-import { buildReducer } from "@oz-utils/redux-reducer";
+import { buildReducer } from "oz-redux-reducer";
 import { Dispatch } from "redux";
 
 type Init = {

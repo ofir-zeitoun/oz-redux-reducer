@@ -1,4 +1,4 @@
-# @oz-utils/redux-reducer
+# oz-redux-reducer
 
 This utility reduces the boilerplate for [Redux](https://redux.js.org/ "Official site") store reducers.
 
@@ -21,7 +21,7 @@ Works with:
 ## Install:
 
 ```
-npm i @oz-utils/redux-reducer
+npm i oz-redux-reducer
 ```
 
 ## Usage:
@@ -30,7 +30,7 @@ npm i @oz-utils/redux-reducer
 
 ```ts
 import { Dispatch } from "redux";
-import { buildReducer } from "@oz-utils/redux-reducer";
+import { buildReducer } from "oz-redux-reducer";
 
 export const [demoReducer, demoActions] = buildReducer({
   // initial state
