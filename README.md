@@ -1,10 +1,11 @@
-# oz-redux-reducer
+# @oz-utils/redux-reducer
 
 This utility reduces the boilerplate for [Redux](https://redux.js.org/ "Official site") store reducers.
 
 In one function you will have both the reducer and the actions without the need for types.
 
 No more switch cases
+
 No more types
 
 Works with:
@@ -20,53 +21,57 @@ Works with:
 ## Install:
 
 ```
-npm i oz-redux-reducer
+npm i @oz-utils/redux-reducer
 ```
 
 ## Usage:
 
+`./src/store/reducers/demo-reducer.ts`
+
 ```ts
-import { buildOzReducer } from "oz-redux-reducer";
-// .
-// .
-// .
-export const [testReducer, testActions] = buildOzReducer({
-  text: "test",
+import { Dispatch } from "redux";
+import { buildReducer } from "@oz-utils/redux-reducer";
+
+export const [demoReducer, demoActions] = buildReducer({
+  // initial state
+  text: "<some init value>s",
+
+  // actions
   setText(state: object, newValue: string) {
     return { ...state, text: newValue };
   },
-  async fetchText(dispatch: Function) {
-    const value = await fetch(
-      ///...
-    ).then(response => response.text());
-    dispatch(testActions.setText(value));
+
+  async fetchText(dispatch: Dispatch) {
+    const value = await fetch(/*...*/);
+    dispatch(demoActions.setText(value));
   };
 });
 ```
 
-in reducers file:
+`.src/store/actions.ts`
 
-```js
+```ts
+export { demoActions } from "./reducers/demo-reducer.ts
+```
+
+`./src/store/reducers/index.ts`
+
+```ts
 import { combineReducers } from "redux";
-
-// ...
-import { testReducer } from "./TestReducer";
-// ...
+import { demoReducer } from "./demo-reducer";
 
 export default combineReducers({
-  // ...
-  test: testReducer
-  // ...
+  demo: demoReducer,
 });
 ```
 
 calling actions:
 
-```js
-import { testActions } from "./TestReducer";
+```ts
+import { demoActions } from "./demo-reducer";
 
-// ...
-dispatch(testActions.setText("newText"));
+// in compnent or hook
+dispatch(demoActions.setText("newText"));
 ```
 
 ### Now replace old reducers with new ozReducer 😉

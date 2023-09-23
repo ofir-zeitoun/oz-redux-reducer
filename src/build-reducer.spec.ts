@@ -1,7 +1,7 @@
-import { buildOzReducer } from "./oz-reducer";
+import { buildReducer } from "./build-reducer";
 
 describe("empty reducer", () => {
-  const [reducer, actions] = buildOzReducer({});
+  const [reducer, actions] = buildReducer({});
 
   it("should have only reset!!!", () => {
     expect(Object.keys(actions)).toHaveLength(1);
@@ -16,9 +16,9 @@ describe("empty reducer", () => {
 });
 
 describe("Check initial state", () => {
-  const [reducer, actions] = buildOzReducer({
+  const [reducer, actions] = buildReducer({
     a: 1,
-    b: "abc"
+    b: "abc",
   });
 
   it("should return initial state", () => {
@@ -29,7 +29,7 @@ describe("Check initial state", () => {
 });
 
 describe("Check simple actions", () => {
-  const [reducer, actions] = buildOzReducer({
+  const [reducer, actions] = buildReducer({
     sum: 0,
     add(state: any, toAdd: number) {
       return { ...state, sum: state.sum + toAdd };
@@ -37,7 +37,7 @@ describe("Check simple actions", () => {
 
     async testAsync(state: any) {
       return await state;
-    }
+    },
   });
 
   it("should add a value", () => {
@@ -50,11 +50,11 @@ describe("Check simple actions", () => {
 });
 
 describe("Check state", () => {
-  const [reducer, actions] = buildOzReducer({
+  const [reducer, actions] = buildReducer({
     sum: 0,
     add(state: any, toAdd: number) {
       return { ...state, sum: state.sum + toAdd };
-    }
+    },
   });
 
   const state0 = reducer(undefined, actions.add(0));

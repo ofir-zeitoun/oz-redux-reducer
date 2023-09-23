@@ -60,7 +60,7 @@ function buildInternalReducer<T extends { [s: string]: unknown; }>(obj: T): Redu
     (stateReducer[type] as Function)(state, payload);
 }
 
-export function buildOzReducer<T extends { [s: string]: unknown; }>(obj: T): [Reducer<T>, ActionsType<T>] {
+export function buildReducer<T extends { [s: string]: unknown; }>(obj: T): [Reducer<T>, ActionsType<T>] {
   const actions = buildActions(obj);
   const reducer = buildInternalReducer(obj);
 
